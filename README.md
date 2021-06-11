@@ -3,11 +3,13 @@
 VPS - macloud
 
 #Установка
-```wget https://raw.githubusercontent.com/gasam9088/OpenConnect_ubuntu16.04/main/ocserv
+```
+wget https://raw.githubusercontent.com/gasam9088/OpenConnect_ubuntu16.04/main/ocserv
 chmod +x ocserv
 ```
 
 #Для создания/удаления аккаунтов 
-```cd /etc/ocserv
+```
+cd /etc/ocserv
 ./manage.sh
 ```
