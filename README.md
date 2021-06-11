@@ -1,7 +1,5 @@
 # Настройка VPN сервера для приложения AnyConnect
-ОС - Ubuntu16.04
-
-VPS - macloud
+ОС - Ubuntu 16.04
 
 ## Установка
 ```
