@@ -5,7 +5,7 @@ VPS - macloud
 
 ## Установка
 ```
-:set fileformat=unix
+sed -i -e ‘s/\r$//’
 wget https://raw.githubusercontent.com/gasam9088/OpenConnect_ubuntu16.04/main/ocserv
 chmod +x ocserv
 ./ocserv
