@@ -1,0 +1,71 @@
+#!/bin/sh
+apt update --fix-missing
+apt-get install ocserv certbot iptables-persistent -y
+service ocserv stop
+certbot certonly -d a.fifa-dill.ru --standalone -m yourmail@yandex.ru --agree-tos
+touch /etc/ocserv/ocserv.conf
+
+cat >/etc/ocserv/ocserv.conf <<EOF
+ipv4-network = 172.16.255.0/24
+device = vpns
+max-clients = 16
+max-same-clients = 3
+dns = 1.1.1.1
+# Весь трафик клиентов надо заворачивать на сервер
+route = default
+# Если нужно заворачивать только отдельные подсети
+# То нужно убрать route = default и добавить строки вида:
+# route = 10.10.11.0/24
+# route = 10.254.0.0/15
+compression = true
+auth = "plain[passwd=/etc/ocserv/passwd]"
+tcp-port = 443
+udp-port = 443
+run-as-user = nobody
+run-as-group = daemon
+server-cert = /etc/letsencrypt/live/a.fifa-dill.ru/fullchain.pem
+server-key = /etc/letsencrypt/live/a.fifa-dill.ru/privkey.pem
+socket-file = /var/run/ocserv-socket
+isolate-workers = true
+keepalive = 32400
+dpd = 90
+mobile-dpd = 1800
+try-mtu-discovery = false
+cert-user-oid = 0.9.2342.19200300.100.1.1
+tls-priorities = "NORMAL:%SERVER_PRECEDENCE:%COMPAT:-VERS-SSL3.0"
+auth-timeout = 240
+min-reauth-time = 3
+max-ban-score = 50
+ban-reset-time = 300
+cookie-timeout = 300
+deny-roaming = false
+rekey-time = 172800
+rekey-method = ssl
+use-utmp = true
+use-occtl = true
+pid-file = /var/run/ocserv.pid
+predictable-ips = true
+ping-leases = false
+cisco-client-compat = true
+dtls-legacy = true
+EOF
+
+wget https://raw.githubusercontent.com/gasam9088/OpenConnect_ubuntu16.04/main/passwd
+cp passwd /etc/ocserv/
+service ocserv start
+#настраиваем nat
+echo "net.ipv4.ip_forward = 0" > /etc/sysctl.d/99-my.conf
+sysctl net.ipv4.ip_forward=1
+iptables -t nat -A POSTROUTING -s 172.16.255.0/24 -j MASQUERADE -o ens3
+netfilter-persistent save
+cat>/etc/cron.weekly/certbot-ocserv <<EOF
+#!/bin/sh
+
+exec >> /dev/null 2>> /dev/null
+service ocserv stop
+certbot renew
+service ocserv start
+EOF
+
+cd /etc/ocserv
+wget https://raw.githubusercontent.com/gasam9088/OpenConnect_ubuntu16.04/main/manage.sh
