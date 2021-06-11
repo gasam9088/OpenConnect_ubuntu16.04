@@ -13,5 +13,6 @@ chmod +x ocserv
 ## Для создания/удаления аккаунтов 
 ```
 cd /etc/ocserv
+chmod +x manage.sh
 ./manage.sh
 ```
