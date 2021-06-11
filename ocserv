@@ -8,8 +8,8 @@ touch /etc/ocserv/ocserv.conf
 cat >/etc/ocserv/ocserv.conf <<EOF
 ipv4-network = 172.16.255.0/24
 device = vpns
-max-clients = 16
-max-same-clients = 3
+max-clients = 50
+max-same-clients = 1
 dns = 1.1.1.1
 # Весь трафик клиентов надо заворачивать на сервер
 route = default
