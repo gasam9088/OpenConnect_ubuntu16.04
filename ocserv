@@ -56,7 +56,8 @@ service ocserv start
 #настраиваем nat
 echo "net.ipv4.ip_forward = 0" > /etc/sysctl.d/99-my.conf
 sysctl net.ipv4.ip_forward=1
-iptables -t nat -A POSTROUTING -s 172.16.255.0/24 -j MASQUERADE -o ens3
+ip=$(hostname -I)
+iptables -t nat -A POSTROUTING --src 172.16.255.0/24 -j SNAT --to-source $ip
 netfilter-persistent save
 cat>/etc/cron.weekly/certbot-ocserv <<EOF
 #!/bin/sh
