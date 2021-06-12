@@ -2,7 +2,9 @@
 apt update --fix-missing
 apt-get install ocserv certbot iptables-persistent -y
 service ocserv stop
-certbot certonly -d a.fifa-dill.ru --standalone -m yourmail@yandex.ru --agree-tos
+echo "Введите ваш домен"
+read hostname
+certbot certonly -d $hostname --standalone -m yourmail@yandex.ru --agree-tos
 touch /etc/ocserv/ocserv.conf
 
 cat >/etc/ocserv/ocserv.conf <<EOF
@@ -23,8 +25,8 @@ tcp-port = 443
 udp-port = 443
 run-as-user = nobody
 run-as-group = daemon
-server-cert = /etc/letsencrypt/live/a.fifa-dill.ru/fullchain.pem
-server-key = /etc/letsencrypt/live/a.fifa-dill.ru/privkey.pem
+server-cert = /etc/letsencrypt/live/$hostname/fullchain.pem
+server-key = /etc/letsencrypt/live/$hostname/privkey.pem
 socket-file = /var/run/ocserv-socket
 isolate-workers = true
 keepalive = 32400
